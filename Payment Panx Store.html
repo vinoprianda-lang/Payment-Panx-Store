@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment - Panx Store</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Creepster&display=swap');
+        body {
+            font-family: 'Creepster', cursive;
+            background: linear-gradient(135deg, #000, #788ea5, #330000);
+            background-size: 400% 400%;
+            animation: flicker 5s infinite;
+        }
+        @keyframes flicker {
+            0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% { background-position: 0% 50%; }
+            20%, 24%, 55% { background-position: 100% 50%; }
+        }
+        .glowing {
+            text-shadow: 0 0 10px #ff0000, 0 0 20px #ff0000;
+            color: #ff4500;
+        }
+        .shadow-card {
+            box-shadow: 0 0 20px rgba(255, 0, 0, 0.5), inset 0 0 20px rgba(255, 0, 0, 0.3);
+        }
+        .input-field {
+            background: #000;
+            border: 2px solid #ff4500;
+            color: #fff;
+        }
+        .input-field:focus {
+            box-shadow: 0 0 15px #ff4500;
+            background: #000;
+        }
+        .haunt-btn {
+            background: linear-gradient(45deg, #FF0000, #B22222);
+            box-shadow: 0 0 20px rgba(255, 0, 0, 0.8);
+            transition: all 0.3s ease;
+        }
+        .haunt-btn:hover {
+            box-shadow: 0 0 30px rgba(255, 0, 0, 1), 0 0 40px rgba(255, 0, 0, 0.5);
+            transform: scale(1.05);
+        }
+        .error-msg {
+            color: #ffdd00;
+            font-size: 0.9rem;
+        }
+        .success-msg {
+            color: #00ff00;
+            font-size: 1.1rem;
+        }
+        .qr-display {
+            display: none;
+            margin-top: 1rem;
+            text-align: center;
+        }
+        .qr-display.show {
+            display: block;
+        }
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+    </style>
+</head>
+<body class="text-white min-h-screen flex items-center justify-center p-4">
+    <div class="w-full max-w-md">
+        <div class="text-center mb-8">
+            <h1 class="text-4xl glowing mb-2">PANX PAYMENT</h1>
+            <p class="text-lg text-gray-300">METODE PEMBAYARAN PANX STORE.</p>
+            <div class="mt-4">
+                <img src="https://files.catbox.moe/lqi0un.jpg" alt="A dark, swirling portal with red glowing edges emanating from a stone archway in a foggy graveyard, evoking mystery and fear" class="mx-auto rounded-lg opacity-80 pulse" />
+            </div>
+        </div>
+        <center>
+
+        <form id="paymentForm" class="shadow-card p-6 rounded-lg bg-gray-900">
+            <div class="mb-4">
+                <label class="block text-sm font-bold mb-2 glowing">Silahkan Pilih Metode Pambayaran (Please select a payment method)</label>
+                <div class="space-y-2">
+                    <label class="flex items-center">
+                       <div class="Dana"paymentMethod" value="dana" class="mr-2 accent-white-500">
+                        <span class="text-orange-400 font-bold">DANA 082196547034-KIRIM BUKTI TRANSACTIONS</span>
+                    </label>
+                    <label class="flex items-center">
+                        <div class=Gopay"paymentMethod" value="gopay" class="mr-2 accent-White-500">
+                        <span class="text-green-400 font-bold">GoPay 082196547034-KIRIM BUKTI TRANSACTIONS</span>
+                    </label>
+                    <label class="flex items-center">
+                        <div class=Qris" paymentMethod" value="qris" checked class="mr-2 accent-red-500">
+                        <span class="text-purple-400 font-bold">QRIS-SILAHKAN KIRIM BUKTI TRANSACTIONS</span>
+                    </label>
+                </div>
+            </div>
+
+            <div id="qrisSection" class="qr-display show">
+                <p class="text-sm glowing">Silahkan Scan Qris Dibawah Ini Dan kirim bukti transactions:</p>
+                <div class="mt-4">
+                    <img src="https://files.catbox.moe/j6a6ng.jpg" alt="A haunting QR code for QRIS payment featuring a swirling vortex in the center surrounded by glowing red runes and faint ghostly figures in the background, symbolizing a deep abyssal rift where digital transactions summon dark energies" class="mx-auto rounded border-2 border-red-500" />
+                </div>
+                <p class="text-xs text-gray-400 mt-2">NOTE: SILAHKAH KIRIM BUKTI TRANSACTIONS!</p>
+            </div>
+
+
+        </form>
+        
+        
+        <div class="text-center mt-6">
+            <p class="text-sm text-gray-400"
+            
+            
+            >Powered by Noxzz Attacker - DANA, GoPay, QRIS.</p>
+        </div>
+    </div>
+
+    <script>
+        // Payment method selection handler
+        document.querySelectorAll('input[name="paymentMethod"]').forEach(radio => {
+            radio.addEventListener('change', function() {
+                const qrisSection = document.getElementById('qrisSection');
+                if (this.value === 'qris') {
+                    qrisSection.classList.add('show');
+                } else {
+                    qrisSection.classList.remove('show');
+                }
+            });
+        });
+
+        document.getElementById('paymentForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const cardNumber = document.getElementById('cardNumber');
+            const expDate = document.getElementById('expDate');
+            const cvv = document.getElementById('cvv');
+            const amount = document.getElementById('amount');
+            const selectedMethod = document.querySelector('input[name="paymentMethod"]:checked').value;
+            const responseMsg = document.getElementById('responseMsg');
+            const cardError = document.getElementById('cardError');
+
+            cardError.classList.add('hidden');
+            responseMsg.classList.add('hidden');
+
+            // Simulate basic validation
+            const cardRegex = /^\d{4}-\d{4}-\d{4}-\d{4}$/;
+            if (!cardRegex.test(cardNumber.value)) {
+                cardError.textContent = 'The shadows require the exact format: XXXX-XXXX-XXXX-XXXX';
+                cardError.classList.remove('hidden');
+                return;
+            }
+
+            // Simulate payment processing with method-specific messages
+            let methodLabel = '';
+            if (selectedMethod === 'dana') methodLabel = 'DANA abyss';
+            else if (selectedMethod === 'gopay') methodLabel = 'GoPay ghosts';
+            else methodLabel = 'QRIS rift';
+
+            responseMsg.textContent = `Processing via ${methodLabel}... Summoning payment spirits...`;
+            responseMsg.classList.remove('hidden');
+            responseMsg.style.color = '#ffdd00';
+            responseMsg.classList.remove('success-msg');
+
+            setTimeout(() => {
+                responseMsg.textContent = `Payment successful through ${methodLabel}! The void has claimed your funds... forever.`;
+                responseMsg.style.color = '#00ff00';
+                responseMsg.classList.add('success-msg');
+            }, 2000);
+        });
+
+        // Format card number
+        document.getElementById('cardNumber').addEventListener('input', function() {
+            let value = this.value.replace(/\D/g, '');
+            value = value.substring(0, 16);
+            value = value.replace(/(\d{4})(?=\d)/g, '$1-');
+            this.value = value;
+        });
+
+        // Add some eerie sound effect simulation (console logs)
+        document.addEventListener('keydown', () => {
+            console.log('Ghostly whispers echo in the background...');
+        });
+        setInterval(() => {
+            console.log('Distant cackles from the DANA, GoPay, QRIS');
+        }, 10000);
+    </script>
+</body>
+</center>
+</html>
+</content>
+</create_file>
